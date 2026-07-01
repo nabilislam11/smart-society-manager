@@ -9,13 +9,13 @@ const loginController = async (req, res) => {
     console.log(email, password);
 
     if (!email || !password) {
-      return res.status(404).json({
+      return res.status(400).json({
         success: false,
         message: "Email and Password are reqquired",
       });
     }
-    const existingAdmin = await User.findOne({ email });
-    if (!existingAdmin) {
+    const user = await User.findOne({ email });
+    if (!user) {
       return res.status(404).json({
         success: false,
         message: "Admin not Fount ",
