@@ -15,6 +15,8 @@ const loginController = async (req, res) => {
       });
     }
     const user = await User.findOne({ email });
+    console.log(user);
+
     if (!user) {
       return res.status(404).json({
         success: false,
@@ -22,7 +24,7 @@ const loginController = async (req, res) => {
       });
     }
     //comapre password
-    const isMatch = await bcrypt.compare(password, existingAdmin.password);
+    const isMatch = await bcrypt.compare(password, user.password);
     if (!isMatch) {
       return res.status(401).json({
         success: false,
@@ -30,7 +32,7 @@ const loginController = async (req, res) => {
       });
     }
     const token = tokenGenarator(
-      { id: existingAdmin._id, role: existingAdmin.role },
+      { id: user._id, role: user.role },
       process.env.ACCESS_TOKEN_SECRET,
       "7d",
     );
@@ -38,11 +40,11 @@ const loginController = async (req, res) => {
       success: true,
       message: "Login Successfully",
       token,
-      existingAdmin: {
-        id: existingAdmin.id,
-        fullname: existingAdmin.fullname,
-        email: existingAdmin.email,
-        role: existingAdmin.role,
+      user: {
+        id: user.id,
+        fullname: user.fullname,
+        email: user.email,
+        role: user.role,
       },
     });
   } catch (error) {
